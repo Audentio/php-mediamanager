@@ -1,0 +1,23 @@
+{
+    "name": "audentio/php-mediamanager",
+    "description": "PHP video manager",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Audentio\\MediaManager\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Jake Booher",
+            "email": "jakeb@audentio.com"
+        }
+    ],
+    "require-dev": {
+        "symfony/var-dumper": "^6.3"
+    },
+    "require": {
+        "guzzlehttp/guzzle": "^7"
+    }
+}
