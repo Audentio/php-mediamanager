@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Audentio\MediaManager\Providers;
 
@@ -95,7 +97,7 @@ abstract class AbstractProvider
         $this->url = $url;
 
         if (!$this->matchesUrl()) {
-            throw new UrlMatchException;
+            throw new UrlMatchException();
         }
 
         $this->validateConfig();
