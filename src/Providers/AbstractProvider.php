@@ -4,6 +4,7 @@ namespace Audentio\MediaManager\Providers;
 
 use Audentio\MediaManager\Exceptions\ConfigurationException;
 use Audentio\MediaManager\Exceptions\UrlMatchException;
+use Audentio\MediaManager\MediaTypeEnum;
 use Audentio\MediaManager\Response;
 use Audentio\MediaManager\MediaManager;
 use GuzzleHttp\Client;
@@ -80,6 +81,7 @@ abstract class AbstractProvider
     }
 
     abstract public function getId(): string;
+    abstract public function getType(): MediaTypeEnum;
     abstract public function getName(): ?string;
     abstract public function getDescription(): ?string;
     abstract public function getDuration(): \DateInterval;

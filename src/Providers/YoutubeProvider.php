@@ -2,11 +2,17 @@
 
 namespace Audentio\MediaManager\Providers;
 
+use Audentio\MediaManager\MediaTypeEnum;
 use Audentio\MediaManager\Providers\Traits\UrlRegexTrait;
 
 class YoutubeProvider extends AbstractProvider
 {
     use UrlRegexTrait;
+
+    public function getType(): MediaTypeEnum
+    {
+        return MediaTypeEnum::VIDEO;
+    }
 
     public function getName(): string
     {
