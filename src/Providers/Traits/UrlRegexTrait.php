@@ -35,12 +35,16 @@ trait UrlRegexTrait
         ];
 
         foreach ($replacements as $key => $value) {
-            $regex = preg_replace_callback('/<PH:' . $key . '(:?([0-9a-zA-Z]+)?)>/', function ($matches) use ($key, $value) {
-                if (!empty($matches[2])) {
-                    $value = str_replace('<id>', '<' . $matches[2] . '>', $value);
-                }
-                return $value;
-            }, $regex);
+            $regex = preg_replace_callback(
+                '/<PH:' . $key . '(:?([0-9a-zA-Z]+)?)>/',
+                function ($matches) use ($key, $value) {
+                    if (!empty($matches[2])) {
+                        $value = str_replace('<id>', '<' . $matches[2] . '>', $value);
+                    }
+                    return $value;
+                },
+                $regex
+            );
         }
 
         return $regex;

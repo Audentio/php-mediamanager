@@ -74,10 +74,10 @@ abstract class AbstractProvider
 
     protected function getRequestHeaders(): array
     {
-        return array_replace([], $this->_getRequestHeaders());
+        return array_replace([], $this->getAdditionalRequestHeaders());
     }
 
-    protected function _getRequestHeaders(): array
+    protected function getAdditionalRequestHeaders(): array
     {
         return [];
     }
