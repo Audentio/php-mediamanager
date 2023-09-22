@@ -86,7 +86,7 @@ abstract class AbstractProvider
     abstract public function getType(): MediaTypeEnum;
     abstract public function getName(): ?string;
     abstract public function getDescription(): ?string;
-    abstract public function getDuration(): \DateInterval;
+    abstract public function getDuration(): ?\DateInterval;
     abstract public function getThumbnail(): ?string;
     abstract public function exists(): bool;
     abstract protected function matchesUrl(): bool;

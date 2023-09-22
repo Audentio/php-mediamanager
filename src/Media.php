@@ -18,6 +18,7 @@ class Media
 {
     private array $attributes = [
         'id',
+        'type',
         'name',
         'description',
         'image',

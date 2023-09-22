@@ -6,6 +6,7 @@ namespace Audentio\MediaManager;
 
 use Audentio\MediaManager\Exceptions\UrlMatchException;
 use Audentio\MediaManager\Providers\AbstractProvider;
+use Audentio\MediaManager\Providers\ApplePodcastProvider;
 use Audentio\MediaManager\Providers\VimeoProvider;
 use Audentio\MediaManager\Providers\YoutubeProvider;
 
@@ -14,6 +15,7 @@ class MediaManager
     private array $providers = [
         YoutubeProvider::class,
         VimeoProvider::class,
+        ApplePodcastProvider::class,
     ];
     private array $config = [];
     private bool $usingProviderWhitelist = false;

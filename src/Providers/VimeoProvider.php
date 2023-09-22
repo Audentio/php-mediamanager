@@ -26,10 +26,9 @@ class VimeoProvider extends AbstractProvider
         return $this->getVideoData()['description'] ?? null;
     }
 
-    public function getDuration(): \DateInterval
+    public function getDuration(): ?\DateInterval
     {
-        $videoData = $this->getVideoData();
-        return new \DateInterval('PT' . $videoData['duration'] . 'S');
+        return new \DateInterval('PT' . $this->getVideoData()['duration'] . 'S');
     }
 
     public function getThumbnail(): ?string
@@ -39,9 +38,7 @@ class VimeoProvider extends AbstractProvider
 
     public function exists(): bool
     {
-        $videoData = $this->getVideoData();
-
-        return $videoData !== null;
+        return $this->getVideoData() !== null;
     }
 
     protected function getVideoData(): ?array
