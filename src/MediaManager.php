@@ -7,6 +7,7 @@ namespace Audentio\MediaManager;
 use Audentio\MediaManager\Caches\CacheTypeEnum;
 use Audentio\MediaManager\Caches\Handlers\AbstractCache;
 use Audentio\MediaManager\Caches\Handlers\StaticCache;
+use Audentio\MediaManager\Exceptions\NotFoundException;
 use Audentio\MediaManager\Exceptions\UrlMatchException;
 use Audentio\MediaManager\Providers\AbstractProvider;
 use Audentio\MediaManager\Providers\ApplePodcastProvider;
@@ -44,12 +45,10 @@ class MediaManager
                 /** @var AbstractProvider $handler */
                 $handler = new $provider($this, $url);
                 if (!$handler->exists()) {
-                    return null;
+                    throw new NotFoundException;
                 }
 
                 return new Media($handler);
-            } catch (UrlMatchException $e) {
-                continue;
             } catch (\Throwable $e) {
                 if (!$this->isSilent) {
                     throw $e;
