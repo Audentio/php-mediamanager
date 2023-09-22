@@ -6,7 +6,8 @@ namespace Audentio\MediaManager;
 
 enum MediaTypeEnum
 {
-    case GROUP;
     case VIDEO;
-    case AUDIO;
+    case PODCAST;
+    case PODCAST_EPISODE;
+    case MUSIC;
 }
