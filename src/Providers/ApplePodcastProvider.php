@@ -53,6 +53,9 @@ class ApplePodcastProvider extends AbstractProvider
     protected function getPodcastData(): ?array
     {
         $response = $this->request($this->url);
+        if (!$response) {
+            return null;
+        }
         $contents = $response->getContents();
         preg_match('#name="schema:podcast-(?:episode)?(?:show)?".*?>(.*?)</script>#is', $contents, $matches);
         return json_decode(trim($matches[1] ?? ''), true);
@@ -65,7 +68,7 @@ class ApplePodcastProvider extends AbstractProvider
         ];
     }
 
-    protected function getRegexIdFromMatches(array $matches): string
+    protected function getRegexIdFromMatches(array $matches): ?string
     {
         if (isset($matches['episode'])) {
             $this->isEpisode = true;

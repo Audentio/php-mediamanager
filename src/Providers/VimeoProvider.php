@@ -28,7 +28,7 @@ class VimeoProvider extends AbstractProvider
 
     public function getDuration(): ?\DateInterval
     {
-        return new \DateInterval('PT' . $this->getVideoData()['duration'] . 'S');
+        return $this->getDurationFromSeconds($this->getVideoData()['duration']);
     }
 
     public function getThumbnail(): ?string
@@ -45,6 +45,9 @@ class VimeoProvider extends AbstractProvider
     {
         $url = 'https://api.vimeo.com/videos/' . $this->getId() . '?access_token=' . $this->getConfig()['api_key'];
         $response = $this->request($url);
+        if (!$response) {
+            return null;
+        }
 
         return json_decode($response->getContents(), true);
     }

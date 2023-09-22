@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Audentio\MediaManager\Providers;
 
+use Audentio\MediaManager\Caches\CacheTypeEnum;
 use Audentio\MediaManager\Exceptions\ConfigurationException;
 use Audentio\MediaManager\Exceptions\UrlMatchException;
 use Audentio\MediaManager\MediaTypeEnum;
@@ -14,7 +15,7 @@ use GuzzleHttp\Exception\ClientException;
 
 abstract class AbstractProvider
 {
-    protected MediaManager $MediaManager;
+    protected MediaManager $mediaManager;
     protected string $url;
     protected array $requestCache = [];
     protected Client $client;
@@ -40,15 +41,63 @@ abstract class AbstractProvider
 
     protected function getConfig(): array
     {
-        return $this->MediaManager->getConfig(static::class);
+        return $this->mediaManager->getConfig(static::class);
     }
 
-    protected function request(string $url, bool $force = false): ?Response
+    protected function getDurationFromSeconds(int $seconds): \DateInterval
     {
-        $requestHash = $url;
-        if (!$force && array_key_exists($requestHash, $this->requestCache)) {
-            return $this->requestCache[$requestHash];
+        $duration = 'PT';
+
+        $units = [
+            'D' => 60 * 60 * 24,
+            'H' => 60 * 60,
+            'M' => 60,
+            'S' => 1,
+        ];
+
+        foreach ($units as $key => $unit) {
+            if ($seconds >= $unit) {
+                $value = floor($seconds / $unit);
+                $seconds -= $value * $unit;
+                $duration .= $value . $key;
+            }
         }
+
+        return new \DateInterval($duration);
+    }
+
+    protected function request(string $url, array $params = [], string $method = 'get', bool $cacheable = true, bool $force = false): ?Response
+    {
+        $cache = $this->mediaManager->getCache(CacheTypeEnum::REQUEST);
+        $requestHash = 'request_' . md5($url);
+        if ($cacheable && !$force && $cache->exists($requestHash)) {
+            return $cache->get($requestHash);
+        }
+
+        try {
+            if (!isset($params['headers'])) {
+                $params['headers'] = [];
+            }
+
+            $params['headers'] = array_replace($params['headers'], $this->getRequestHeaders());
+            $response = $this->getHttpClient()->request($method, $url, $params);
+            $cacheValue = Response::createFromResponse($response);
+
+            if ($cacheable) {
+                $cache->set($requestHash, $cacheValue, 30);
+            }
+            return $cacheValue;
+        } catch (ClientException $e) {
+            if ($e->getResponse()->getStatusCode() === 404) {
+                return null;
+            }
+
+            throw $e;
+        }
+    }
+
+    protected function getHttpClient(): Client
+    {
         if (!isset($this->client)) {
             $this->client = new Client([
                 'headers' => [
@@ -57,19 +106,7 @@ abstract class AbstractProvider
             ]);
         }
 
-
-        try {
-            $response = $this->client->request('get', $url, $this->getRequestHeaders());
-
-            $this->requestCache[$requestHash] = new Response($response);
-            return $this->requestCache[$requestHash];
-        } catch (ClientException $e) {
-            if ($e->getResponse()->getStatusCode() === 404 || $e->getResponse()->getStatusCode() === 400) {
-                return null;
-            }
-
-            throw $e;
-        }
+        return $this->client;
     }
 
     protected function getRequestHeaders(): array
@@ -93,7 +130,7 @@ abstract class AbstractProvider
 
     public function __construct(MediaManager $MediaManager, string $url)
     {
-        $this->MediaManager = $MediaManager;
+        $this->mediaManager = $MediaManager;
         $this->url = $url;
 
         if (!$this->matchesUrl()) {

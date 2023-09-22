@@ -18,15 +18,18 @@ trait UrlRegexTrait
         foreach ($this->getRegex() as $regex) {
             $regex = $this->prepareRegex($regex);
             if (preg_match($regex, $this->url, $matches)) {
-                $this->regexId = $this->getRegexIdFromMatches($matches);
-                return true;
+                $regexId = $this->getRegexIdFromMatches($matches);
+                if ($regexId) {
+                    $this->regexId = $regexId;
+                    return true;
+                }
             }
         }
 
         return false;
     }
 
-    protected function getRegexIdFromMatches(array $matches): string
+    protected function getRegexIdFromMatches(array $matches): ?string
     {
         return $matches['id'];
     }

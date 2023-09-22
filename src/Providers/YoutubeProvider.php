@@ -46,6 +46,10 @@ class YoutubeProvider extends AbstractProvider
         $url = 'https://www.googleapis.com/youtube/v3/videos?id=' . $this->getId() .
             '&part=contentDetails,snippet&key=' . $this->getConfig()['api_key'];
         $response = $this->request($url);
+        if (!$response) {
+            return null;
+        }
+
         return json_decode($response->getContents(), true)['items'][0] ?? null;
     }
 

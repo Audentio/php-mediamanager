@@ -1,6 +1,7 @@
 /vendor
 /.idea
 /test.php
+/cache
 
 .DS_Store
 composer.lock

@@ -4,22 +4,23 @@ declare(strict_types=1);
 
 namespace Audentio\MediaManager;
 
+use Audentio\MediaManager\Caches\CacheDataInterface;
 use Psr\Http\Message\ResponseInterface;
 
-class Response
+class Response implements CacheDataInterface
 {
-    private ResponseInterface $response;
-
+    private array $headers;
+    private int $statusCode;
     private string $contents;
 
     public function getHeaders(): array
     {
-        return $this->response->getHeaders();
+        return $this->headers;
     }
 
     public function getStatusCode(): int
     {
-        return $this->response->getStatusCode();
+        return $this->statusCode;
     }
 
     public function getContents(): string
@@ -34,8 +35,38 @@ class Response
         return $this->contents;
     }
 
-    public function __construct(ResponseInterface $response)
+    public function getCacheData(): mixed
     {
-        $this->response = $response;
+        return [
+            'headers' => $this->headers,
+            'statusCode' => $this->statusCode,
+            'contents' => $this->contents,
+        ];
+    }
+
+    public static function createFromCacheData(mixed $data): static
+    {
+        return new static(
+            $data['headers'],
+            $data['statusCode'],
+            $data['contents']
+        );
+    }
+
+    public static function createFromResponse(ResponseInterface $response): static
+    {
+        $response->getBody()->rewind();
+        return new static(
+            $response->getHeaders(),
+            $response->getStatusCode(),
+            $response->getBody()->getContents()
+        );
+    }
+
+    public function __construct(array $headers, int $statusCode, string $contents)
+    {
+        $this->headers = $headers;
+        $this->statusCode = $statusCode;
+        $this->contents = $contents;
     }
 }

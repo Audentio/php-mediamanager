@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace Audentio\MediaManager;
 
+use Audentio\MediaManager\Caches\CacheTypeEnum;
+use Audentio\MediaManager\Caches\Handlers\AbstractCache;
+use Audentio\MediaManager\Caches\Handlers\StaticCache;
 use Audentio\MediaManager\Exceptions\UrlMatchException;
 use Audentio\MediaManager\Providers\AbstractProvider;
 use Audentio\MediaManager\Providers\ApplePodcastProvider;
+use Audentio\MediaManager\Providers\SpotifyProvider;
 use Audentio\MediaManager\Providers\VimeoProvider;
 use Audentio\MediaManager\Providers\YoutubeProvider;
 
@@ -16,14 +20,21 @@ class MediaManager
         YoutubeProvider::class,
         VimeoProvider::class,
         ApplePodcastProvider::class,
+        SpotifyProvider::class,
     ];
     private array $config = [];
     private bool $usingProviderWhitelist = false;
     private bool $isSilent = false;
+    private array $caches;
 
     public function getConfig(string $provider): array
     {
         return $this->config[$provider] ?? [];
+    }
+
+    public function getCache(CacheTypeEnum $cacheType): AbstractCache
+    {
+        return $this->caches[$cacheType->name];
     }
 
     public function get(string $url): ?Media
@@ -72,6 +83,17 @@ class MediaManager
         return $this;
     }
 
+    public function withAdditionalProviders(array $providers): self
+    {
+        foreach ($providers as $provider) {
+            if (!in_array($provider, $this->providers)) {
+                $this->providers[] = $provider;
+            }
+        }
+
+        return $this;
+    }
+
     public function usingProviderWhitelist(array $providers): self
     {
         $this->providers = $providers;
@@ -80,10 +102,31 @@ class MediaManager
         return $this;
     }
 
-    public function __construct(array $additionalProviders = [])
+    public function __construct(null|AbstractCache|array $caches = null)
     {
-        foreach ($additionalProviders as $provider) {
-            $this->providers[] = $provider;
+        if ($caches === null) {
+            $caches = new StaticCache;
         }
+
+        if (!is_array($caches)) {
+            $cache = $caches;
+            $caches = [];
+
+            foreach (CacheTypeEnum::cases() as $case) {
+                $caches[$case->name] = $cache;
+            }
+        }
+
+        foreach (CacheTypeEnum::cases() as $case) {
+            $defaultCache = null;
+            if (!array_key_exists($case->name, $caches)) {
+                if (!$defaultCache) {
+                    $defaultCache = new StaticCache;
+                }
+                $caches[$case->name] = $defaultCache;
+            }
+        }
+
+        $this->caches = $caches;
     }
 }

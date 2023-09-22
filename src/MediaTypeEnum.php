@@ -9,5 +9,8 @@ enum MediaTypeEnum
     case VIDEO;
     case PODCAST;
     case PODCAST_EPISODE;
-    case MUSIC;
+    case ARTIST;
+    case ALBUM;
+    case PLAYLIST;
+    case SONG;
 }
