@@ -60,6 +60,7 @@ class YoutubeProvider extends AbstractProvider
             '#youtube.com/watch\?.*&v=<PH:slug>#i',
             '#youtu.be/<PH:slug>#i',
             '#youtube.com/embed/<PH:slug>#i',
+            '#youtube.com/live/<PH:slug>#i',
         ];
     }
 
