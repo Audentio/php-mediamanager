@@ -7,6 +7,7 @@ namespace Audentio\MediaManager\Providers;
 use Audentio\MediaManager\Caches\CacheTypeEnum;
 use Audentio\MediaManager\Exceptions\ConfigurationException;
 use Audentio\MediaManager\Exceptions\UrlMatchException;
+use Audentio\MediaManager\MediaBroadcastDetails;
 use Audentio\MediaManager\MediaTypeEnum;
 use Audentio\MediaManager\Response;
 use Audentio\MediaManager\MediaManager;
@@ -23,6 +24,11 @@ abstract class AbstractProvider
     public function getUrl(): string
     {
         return $this->url;
+    }
+
+    public function getBroadcastDetails(): ?MediaBroadcastDetails
+    {
+        return null;
     }
 
     protected function validateConfig(): void

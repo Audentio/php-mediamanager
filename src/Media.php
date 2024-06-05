@@ -13,6 +13,7 @@ use Audentio\MediaManager\Providers\AbstractProvider;
  * @property-read string $url
  * @property-read \DateInterval $duration
  * @property-read ?string $thumbnail
+ * @property-read ?MediaBroadcastDetails $broadcastDetails
  */
 class Media
 {
@@ -25,6 +26,7 @@ class Media
         'thumbnail',
         'url',
         'duration',
+        'broadcastDetails',
     ];
     private AbstractProvider $provider;
 
