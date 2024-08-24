@@ -42,7 +42,7 @@ class Media
             return $this->provider->$methodName();
         }
 
-        trigger_error('Undefined property: ' . self::class . '::$' . $name, E_USER_WARNING);
+        // trigger_error('Undefined property: ' . self::class . '::$' . $name, E_USER_WARNING);
         return null;
     }
 
