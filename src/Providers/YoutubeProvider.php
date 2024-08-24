@@ -31,7 +31,12 @@ class YoutubeProvider extends AbstractProvider
 
     public function getDuration(): ?\DateInterval
     {
-        return new \DateInterval($this->getVideoData()['contentDetails']['duration']);
+        $duration = $this->getVideoData()['contentDetails']['duration'] ?? null;
+
+        if (!$duration) {
+            return null;
+        }
+        return new \DateInterval($duration);
     }
 
     public function getThumbnail(): ?string
